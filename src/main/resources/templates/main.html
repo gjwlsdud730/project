@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>main</title>
+</head>
+<body>
+<h2>main(로그인 성공)</h2>
+  session 값: <p th:text="${session.loginId}"></p>
+  <a href="/user/update">내 정보 수정</a>
+  <a href="/user/logout">로그아웃</a>
+</body>
+</html>

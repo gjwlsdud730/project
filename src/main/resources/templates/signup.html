@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>signup</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+<h2>signup</h2>
+  <!-- action: form에 작성한 데이터 어디로 보낼지 지정 -->
+  <form action="/user/signup" method="post">
+    <!-- name: 서버로 전송할 때 변수 이름의 역할 -->
+    <label for="userId">
+      아이디: <input type="text" id="userId" name="userId" onkeyup="userIdCheck()"> <br>
+      <span id="check-result"></span>
+    </label> <br>
+    <label for="userPassword">
+      비밀번호: <input type="password" id="userPassword" name="userPassword">
+    </label> <br>
+    <label for="userName">
+      이름: <input type="text" id="userName" name="userName">
+    </label> <br>
+    <input type="submit" value="회원가입">
+  </form>
+</body>
+<script th:inline="javascript">
+  const userIdCheck = () => {
+      const userid = document.getElementById("userId").value;
+      const checkResult = document.getElementById("check-result");
+      console.log("입력값: ", userid);
+      $.ajax({
+         type: "post",
+         url: "/user/userId-check",
+         data: {
+             "userId": userid
+         },
+          success: function(res) {
+             console.log("요청성공", res);
+             if (res === "ok") {
+                 console.log("사용가능한 이메일");
+                 checkResult.style.color = "green";
+                 checkResult.innerHTML = "사용 가능한 이메일 입니다."
+             } else {
+                 console.log("이미 사용중인 이메일");
+                 checkResult.style.color = "red";
+                 checkResult.innerHTML = "이미 사용 중인 이메일 입니다."
+             }
+          },
+          error: function(err) {
+             console.log("에러발생", err);
+          }
+      });
+  }
+</script>
+</html>
