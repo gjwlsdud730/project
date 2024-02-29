@@ -1,6 +1,6 @@
-package com.example.project.entity;
+package com.example.project.user.entity;
 
-import com.example.project.dto.UserDTO;
+import com.example.project.user.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

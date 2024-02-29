@@ -1,7 +1,6 @@
-package com.example.project.dto;
+package com.example.project.user.dto;
 
-import com.example.project.entity.UserEntity;
-import jakarta.persistence.Column;
+import com.example.project.user.entity.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

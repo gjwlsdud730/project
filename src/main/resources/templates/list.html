@@ -5,29 +5,18 @@
   <title>list</title>
 </head>
 <body>
-<h2>list</h2>
 <table>
   <tr>
-    <th>no</th>
-    <th>userId</th>
-    <th>userPassword</th>
-    <th>userName</th>
-    <th>상세조회</th>
-    <th>삭제</th>
+    <th>번호</th>
+    <th>제목</th>
+    <th>작성일</th>
+    <th>조회</th>
   </tr>
-  <tr th:each="user: ${userList}">
-    <td th:text="${user.id}"></td>
-    <td th:text="${user.userId}"></td>
-    <td th:text="${user.userPassword}"></td>
-    <td th:text="${user.userName}"></td>
-    <td>
-      <!-- rest api /user/1 -->
-      <!-- | 경로상에 찍히는 값 | -->
-      <a th:href="@{|/user/${user.id}|}">조회</a>
-    </td>
-    <td>
-      <a th:href="@{|/user/delete/${user.id}|}">삭제</a>
-    </td>
+  <tr th:each="board: ${boardList}">
+    <td th:text="${board.id}"></td>
+    <td><a th:href="@{|/board/${board.id}|}" th:text="${board.boardTitle}"></a></td>
+    <td th:text="*{#temporals.format(board.boardCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+    <td th:text="${board.boardHits}"></td>
   </tr>
 </table>
 </body>

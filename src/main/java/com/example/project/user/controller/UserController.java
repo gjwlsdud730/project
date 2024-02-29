@@ -1,7 +1,7 @@
-package com.example.project.controller;
+package com.example.project.user.controller;
 
-import com.example.project.dto.UserDTO;
-import com.example.project.service.UserService;
+import com.example.project.user.dto.UserDTO;
+import com.example.project.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,19 +19,19 @@ public class UserController {
     // 회원가입 페이지 출력 요청
     @GetMapping("/user/signup")
     public String signupForm() {
-        return "signup";
+        return "user/signup";
     }
 
     @PostMapping("/user/signup")
     public String signup(@ModelAttribute UserDTO userDTO){
         userService.save(userDTO);
-        return "login";
+        return "user/login";
     }
 
     // 로그인 페이지 출력 요청
     @GetMapping("/user/login")
     public String loginFrom() {
-        return "login";
+        return "user/login";
     }
 
     @PostMapping("/user/login")
@@ -40,11 +40,11 @@ public class UserController {
         if (loginResult != null) {
             // login 성공
             session.setAttribute("loginId", loginResult.getUserId());
-            return "main";
+            return "user/main";
 
         } else {
             // login 실패
-            return "login";
+            return "user/login";
         }
     }
 
@@ -56,7 +56,7 @@ public class UserController {
 
         // html로 가져갈 어떤 데이터가 있을 때 model 사용
         model.addAttribute("userList", userDTOList);
-        return "list";
+        return "user/list";
     }
 
     // 회원 목록 상세 조회 출력 요청
@@ -65,7 +65,7 @@ public class UserController {
     public String findById(@PathVariable Long id, Model model) {
         UserDTO userDTO = userService.findById(id);
         model.addAttribute("user", userDTO);
-        return "detail";
+        return "user/detail";
     }
 
     // 회원정보 수정 출력 요청
@@ -74,7 +74,7 @@ public class UserController {
         String myUserId = (String) session.getAttribute("loginId");
         UserDTO userDTO = userService.updateForm(myUserId);
         model.addAttribute("updateUser", userDTO);
-        return "update";
+        return "user/update";
     }
 
     @PostMapping("/user/update")
@@ -102,5 +102,7 @@ public class UserController {
     public @ResponseBody String emailCheck(@RequestParam String userId) {
         return userService.userIdCheck(userId);
     }
+
+
 
 }
