@@ -20,6 +20,15 @@ public class BoardDTO {
 //    @ManyToOne
 //    private String boardUser
 
+    // DTO 생성자
+    // TODO: 3/1/24  (나중에 user추가)
+    public BoardDTO(Long id, String boardTitle, int boardHits, LocalDateTime boardCreatedTime) {
+        this.id = id;
+        this.boardTitle = boardTitle;
+        this.boardHits = boardHits;
+        this.boardCreatedTime = boardCreatedTime;
+    }
+
     // entity -> DTO
     public static BoardDTO toBoardDTO(BoardEntity boardEntity) {
         BoardDTO boardDTO = new BoardDTO();
@@ -31,4 +40,6 @@ public class BoardDTO {
 
         return boardDTO;
     }
+
+
 }

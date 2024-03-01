@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>update</title>
+</head>
+<body>
+<form action="/board/update" method="post" name="updateForm">
+  <input type="hidden" name="id" th:value="${boardUpdate.id}">
+ <label>
+    제목: <input type="text" name="boardTitle" th:value="${boardUpdate.boardTitle}">
+ </label> <br>
+  <label>
+    내용: <textarea name="boardContents" cols="30" rows="10" th:text="${boardUpdate.boardContents}"></textarea>
+  </label> <br>
+  <input type="hidden" name="boardHits" th:value="${boardUpdate.boardHits}">
+  <input type="submit" value="글수정">
+</form>
+</body>
