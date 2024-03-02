@@ -18,6 +18,7 @@
 </form>
 
 <script>
+
     // 서버로 데이터를 전송하는 함수
     function submitForm() {
         var fileInput = document.getElementById('fileInput');
@@ -40,10 +41,18 @@
         // XMLHttpRequest를 이용하여 서버로 데이터 전송
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/board/edit', true);
+
+
+        // 리다이렉트
+        location.href = "/board/paging";
+
+
+        // 서버로 데이터 전송
         xhr.send(formData);
 
         // 이 부분에서 필요한 추가적인 로직을 작성할 수 있습니다.
     }
 </script>
+
 </body>
 </html>
