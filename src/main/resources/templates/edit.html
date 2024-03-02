@@ -7,14 +7,14 @@
 <body>
 <h2>edit</h2>
 
-<form id="boardForm" action="/board/edit" method="post" enctype="multipart/form-data">
+<form id="boardForm" action="/board/edit" method="post" enctype="multipart/form-data" name="boardForm">
   <!-- 추가된 hidden input -->
   <input type="hidden" id="fileCountInput" name="fileCount" value="0">
 
   제목: <input type="text" name="boardTitle"> <br>
   내용: <textarea name="boardContents" cols="30" rows="10"></textarea> <br>
   파일: <input type="file" name="boardFile" id="fileInput" multiple> <br>
-  <input type="button" value="글작성" onclick="submitForm()">
+  <button type="submit" onclick="submitForm()">글작성</button>
 </form>
 
 <script>
@@ -40,17 +40,13 @@
 
         // XMLHttpRequest를 이용하여 서버로 데이터 전송
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/board/edit', true);
-
-
-        // 리다이렉트
-        location.href = "/board/paging";
-
+        xhr.open('post', '/board/edit', true);
 
         // 서버로 데이터 전송
         xhr.send(formData);
 
-        // 이 부분에서 필요한 추가적인 로직을 작성할 수 있습니다.
+        // 리다이렉트
+        // location.href = "/board/paging";
     }
 </script>
 

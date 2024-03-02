@@ -29,7 +29,7 @@ public class BoardController {
     public String edit(@ModelAttribute BoardDTO boardDTO) throws IOException {
         boardDTO.initializeFile();
         boardService.edit(boardDTO);
-        return "index";
+        return "redirect:/board/paging";
     }
 
     // 글 목록
@@ -73,7 +73,7 @@ public class BoardController {
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         boardService.delete(id);
-        return "redirect:/board/";
+        return "redirect:/board/paging";
     }
 
     // 페이징
