@@ -52,7 +52,13 @@ public class BoardService {
                 //            MultipartFile boardFile = boardDTO.getBoardFile(); // 1
                 String originalFilename = boardFile.getOriginalFilename(); // 2
                 String storedFileName = System.currentTimeMillis() + "_" + originalFilename; // 3
-                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName; // 4
+
+                // 맥 로컬
+//                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName; // 4
+
+                // 리눅스 서버
+                String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName; // 4
+
                 boardFile.transferTo(new File(savePath)); // 5
 
                 BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
