@@ -28,47 +28,40 @@ public class BoardService {
 
     // 글 작성 (DTO -> entity)
     public void edit(BoardDTO boardDTO) throws IOException {
-        // 파일 첨부 여부에 따라 로직 분리
         if (boardDTO.getBoardFile().isEmpty()) {
             // 첨부 파일 없음
+            boardDTO.setFileAttached(0); // 파일이 없는 경우 fileAttached를 0으로 설정
             BoardEntity boardEntity = BoardEntity.toEditEntity(boardDTO);
             boardRepository.save(boardEntity);
         } else {
-            // 첨부 파일 있음
-            // 1. DTO에 담긴 파일을 꺼냄
-            // 2. 파일의 이름을 가져옴
-            // 3. 서버 저장용 이름을 만듦
-            // 4. 저장 경로 설정
-            // 5. 해당 경로에 파일 저장
-            // 6. board_table에 해당 데이터 save
-            // 7. board_file_table에 해당 데이터 save
-
-            // 부모 데이터 먼저 저장 (6)
+            // 첨부 파일이 있는 경우
             BoardEntity boardEntity = BoardEntity.toEditFileEntity(boardDTO);
             Long savedId = boardRepository.save(boardEntity).getId();
-            BoardEntity board = boardRepository.findById(savedId).get();
+            BoardEntity board = boardRepository.findById(savedId).orElseThrow(() -> new RuntimeException("Board not found"));
 
             for (MultipartFile boardFile : boardDTO.getBoardFile()) {
-                //            MultipartFile boardFile = boardDTO.getBoardFile(); // 1
-                String originalFilename = boardFile.getOriginalFilename(); // 2
-                String storedFileName = System.currentTimeMillis() + "_" + originalFilename; // 3
+                if (!boardFile.isEmpty()) { // 파일이 비어있지 않은 경우에만 처리
+                    String originalFilename = boardFile.getOriginalFilename();
+                    String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
 
-                // 맥 로컬
-//                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName; // 4
+                    // 맥 로컬
+//                    String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
 
-                // 리눅스 서버
-                String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName; // 4
+                    // 리눅스 서버
+                     String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
 
-                boardFile.transferTo(new File(savePath)); // 5
+                    boardFile.transferTo(new File(savePath));
 
-                BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
-                boardFileRepository.save(boardFileEntity);
+                    BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
+                    boardFileRepository.save(boardFileEntity);
+                }
             }
-
-
         }
 
+        System.out.println("fileAttached: " + boardDTO.getFileAttached());
+
     }
+
 
     // 글 목록 (entity -> DTO)
     @Transactional

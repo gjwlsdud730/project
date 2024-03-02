@@ -29,6 +29,20 @@ public class BoardDTO {
 //    @ManyToOne
 //    private String boardUser
 
+    // 파일 첨부 여부에 따라 초기화하는 메서드 추가
+    public void initializeFile() {
+        if (this.boardFile == null) {
+            this.boardFile = new ArrayList<>();
+        }
+        if (this.originalFileName == null) {
+            this.originalFileName = new ArrayList<>();
+        }
+        if (this.storedFileName == null) {
+            this.storedFileName = new ArrayList<>();
+        }
+    }
+
+
     // DTO 생성자
     // TODO: 3/1/24  (나중에 user추가)
     public BoardDTO(Long id, String boardTitle, int boardHits, LocalDateTime boardCreatedTime) {
@@ -47,28 +61,26 @@ public class BoardDTO {
         boardDTO.setBoardHits(boardEntity.getBoardHits());
         boardDTO.setBoardCreatedTime(boardEntity.getCreatedTime());
 
-        if(boardEntity.getFileAttached() == 0) {
-            boardDTO.setFileAttached(0);
-        } else {
+        // boardEntity가 null이 아니고, fileAttached가 0이 아닌 경우에만 처리
+        if (boardEntity != null && boardEntity.getFileAttached() != 0) {
             List<String> originalFileNameList = new ArrayList<>();
             List<String> storedFileNameList = new ArrayList<>();
 
             boardDTO.setFileAttached(boardEntity.getFileAttached());
 
-            for (BoardFileEntity boardFileEntity : boardEntity.getBoardFileEntityList()) {
-                originalFileNameList.add(boardFileEntity.getOriginalFileName());
-                storedFileNameList.add(boardFileEntity.getStoredFileName());
+            // getBoardFileEntityList가 null이 아닌 경우에만 처리
+            if (boardEntity.getBoardFileEntityList() != null) {
+                for (BoardFileEntity boardFileEntity : boardEntity.getBoardFileEntityList()) {
+                    originalFileNameList.add(boardFileEntity.getOriginalFileName());
+                    storedFileNameList.add(boardFileEntity.getStoredFileName());
+                }
             }
 
             boardDTO.setOriginalFileName(originalFileNameList);
             boardDTO.setStoredFileName(storedFileNameList);
-
-            // 파일 1개 업로드
-//            // 파일 이름을 가져가야함
-//            // orginalFileName, storedFileName : board_file_table(BoardFileEntity)
-//            // jpa join
-//            boardDTO.setOriginalFileName(boardEntity.getBoardFileEntityList().get(0).getOriginalFileName());
-//            boardDTO.setStoredFileName(boardEntity.getBoardFileEntityList().get(0).getStoredFileName());
+        } else {
+            // fileAttached가 0인 경우
+            boardDTO.setFileAttached(0);
         }
 
         return boardDTO;
