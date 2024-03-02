@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -25,8 +26,7 @@ public class BoardController {
     }
 
     @PostMapping("/edit")
-    public String edit(@ModelAttribute BoardDTO boardDTO) {
-        System.out.println("boardDTO = " + boardDTO);
+    public String edit(@ModelAttribute BoardDTO boardDTO) throws IOException {
         boardService.edit(boardDTO);
         return "index";
     }
@@ -89,7 +89,6 @@ public class BoardController {
         model.addAttribute("endPage", endPage);
 
         return "paging";
-
     }
 }
 
