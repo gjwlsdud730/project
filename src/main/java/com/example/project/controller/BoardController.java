@@ -27,7 +27,6 @@ public class BoardController {
 
     @PostMapping("/edit")
     public String edit(@ModelAttribute BoardDTO boardDTO) throws IOException {
-        boardDTO.initializeFile();
         boardService.edit(boardDTO);
         return "redirect:/board/paging";
     }

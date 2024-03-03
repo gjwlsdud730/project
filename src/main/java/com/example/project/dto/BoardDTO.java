@@ -30,17 +30,7 @@ public class BoardDTO {
 //    private String boardUser
 
     // 파일 첨부 여부에 따라 초기화하는 메서드 추가
-    public void initializeFile() {
-        if (this.boardFile == null) {
-            this.boardFile = new ArrayList<>();
-        }
-        if (this.originalFileName == null) {
-            this.originalFileName = new ArrayList<>();
-        }
-        if (this.storedFileName == null) {
-            this.storedFileName = new ArrayList<>();
-        }
-    }
+
 
 
     // DTO 생성자

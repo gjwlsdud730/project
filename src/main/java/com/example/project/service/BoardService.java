@@ -28,7 +28,7 @@ public class BoardService {
 
     // 글 작성 (DTO -> entity)
     public void edit(BoardDTO boardDTO) throws IOException {
-        if (boardDTO.getBoardFile().isEmpty()) {
+        if (boardDTO.getBoardFile().get(0).isEmpty()) {
             // 첨부 파일 없음
             boardDTO.setFileAttached(0); // 파일이 없는 경우 fileAttached를 0으로 설정
             BoardEntity boardEntity = BoardEntity.toEditEntity(boardDTO);
@@ -45,10 +45,10 @@ public class BoardService {
                     String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
 
                     // 맥 로컬
-//                    String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
+                    String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
 
                     // 리눅스 서버
-                     String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
+//                     String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
 
                     boardFile.transferTo(new File(savePath));
 
