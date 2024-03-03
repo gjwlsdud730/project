@@ -61,12 +61,13 @@ public class BoardService {
     }
 
 
-    // 글 목록 (entity -> DTO)
+    // 글 목록
     @Transactional
     public List<BoardDTO> findAll() {
         List<BoardEntity> boardEntityList = boardRepository.findAll();
-        List<BoardDTO> boardDTOList = new ArrayList<>();
 
+        // entityList -> DTOList
+        List<BoardDTO> boardDTOList = new ArrayList<>();
         for (BoardEntity boardEntity : boardEntityList) {
             boardDTOList.add(BoardDTO.toBoardDTO(boardEntity));
         }
