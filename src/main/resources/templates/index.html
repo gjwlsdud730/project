@@ -11,18 +11,15 @@
 
 <body th:replace="~{/layout/baseLayout :: body}">
 
-<div th:replace="~{/layout/baseLayout :: top}">
+<div th:replace="~{/layout/baseLayout :: top}"></div>
 
+<div th:replace="~{/layout/baseLayout :: content}">
+  <h2>home</h2>
+<!--  <button onclick="editReq()">글작성</button>-->
+<!--  <button onclick="pagingReq()">글목록</button>-->
+<!--  <button onclick="listReq()">boardDB</button>-->
 </div>
 
-<div>
-  <div th:replace="~{/layout/baseLayout :: content}">
-    <h2>home</h2>
-    <button onclick="editReq()">글작성</button>
-    <button onclick="pagingReq()">글목록</button>
-    <button onclick="listReq()">boardDB</button>
-  </div>
-</div>
 
 <div th:replace="/layout/baseLayout.html :: bottom">
 
