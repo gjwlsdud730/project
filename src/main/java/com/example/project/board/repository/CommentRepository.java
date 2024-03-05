@@ -1,7 +1,7 @@
-package com.example.project.repository;
+package com.example.project.board.repository;
 
-import com.example.project.entity.BoardEntity;
-import com.example.project.entity.CommentEntity;
+import com.example.project.board.entity.BoardEntity;
+import com.example.project.board.entity.CommentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

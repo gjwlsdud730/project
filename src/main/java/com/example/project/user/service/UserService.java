@@ -1,8 +1,8 @@
 package com.example.project.user.service;
 
-import com.example.project.user.dto.MemberDTO;
-import com.example.project.user.entity.MemberEntity;
-import com.example.project.user.repository.MemberRepository;
+import com.example.project.user.dto.UserDTO;
+import com.example.project.user.entity.UserEntity;
+import com.example.project.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,30 +12,30 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class UserService {
     // 생성자 주입
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
-    public void save(MemberDTO memberDTO) {
+    public void save(UserDTO userDTO) {
         // DTO -> entity
-        MemberEntity memberEntity = MemberEntity.toUserEntity(memberDTO);
+        UserEntity userEntity = UserEntity.toUserEntity(userDTO);
 
         // repository의 save메서드 호출
-        memberRepository.save(memberEntity);
+        userRepository.save(userEntity);
     }
 
-    public MemberDTO login(MemberDTO memberDTO) {
+    public UserDTO login(UserDTO userDTO) {
         // 이메일을 DB에서 조회
-        Optional<MemberEntity> byUserId = memberRepository.findByUserId(memberDTO.getUserId());
+        Optional<UserEntity> byUserId = userRepository.findByUserId(userDTO.getUserId());
 
         // 조회한 비밀번호가 사용자가 입력한 값과 일치하는지 확인
         if (byUserId.isPresent()) {
             // 조회 결과가 있을 때
-            MemberEntity memberEntity = byUserId.get();
-            if (memberEntity.getUserPassword().equals(memberDTO.getUserPassword())) {
+            UserEntity userEntity = byUserId.get();
+            if (userEntity.getUserPassword().equals(userDTO.getUserPassword())) {
                 // 비밀번호 일치
                 // entity -> DTO
-                return MemberDTO.toUserDTO(memberEntity);
+                return UserDTO.toUserDTO(userEntity);
             } else {
                 // 비밀번호 불일치
                 return null;
@@ -47,48 +47,48 @@ public class MemberService {
     }
 
     // member 조회
-    public List<MemberDTO> findAll() {
-        List<MemberEntity> memberEntityList = memberRepository.findAll();
-        List<MemberDTO> userDTOList = new ArrayList<>();
-        for (MemberEntity memberEntity : memberEntityList) {
-            userDTOList.add(MemberDTO.toUserDTO(memberEntity));
+    public List<UserDTO> findAll() {
+        List<UserEntity> userEntityList = userRepository.findAll();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for (UserEntity userEntity : userEntityList) {
+            userDTOList.add(UserDTO.toUserDTO(userEntity));
         }
 
         return userDTOList;
     }
 
     // member 상세조회
-    public MemberDTO findById(Long id) {
-        Optional<MemberEntity> optionalUserEntity = memberRepository.findById(id);
+    public UserDTO findById(Long id) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
         if (optionalUserEntity.isPresent()) {
-            return MemberDTO.toUserDTO((optionalUserEntity.get()));
+            return UserDTO.toUserDTO((optionalUserEntity.get()));
         } else {
             return null;
         }
     }
 
     // update
-    public MemberDTO updateForm(String myUserId) {
-        Optional<MemberEntity> optionalUserEntity = memberRepository.findByUserId(myUserId);
+    public UserDTO updateForm(String myUserId) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUserId(myUserId);
         if (optionalUserEntity.isPresent()) {
-            return MemberDTO.toUserDTO(optionalUserEntity.get());
+            return UserDTO.toUserDTO(optionalUserEntity.get());
         } else {
             return null;
         }
     }
 
-    public void update(MemberDTO memberDTO) {
-        memberRepository.save(MemberEntity.toUpdateUserEntity(memberDTO));
+    public void update(UserDTO userDTO) {
+        userRepository.save(UserEntity.toUpdateUserEntity(userDTO));
     }
 
     // delete
     public void deleteById(Long id) {
-        memberRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     // userId-check
     public String userIdCheck(String userId) {
-        Optional<MemberEntity> optionalUserEntity = memberRepository.findByUserId(userId);
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUserId(userId);
         if (optionalUserEntity.isPresent()) {
             // 조회결과가 있으면 사용할 수 없도록
             return null;

@@ -1,7 +1,8 @@
-package com.example.project.dto;
+package com.example.project.board.dto;
 
-import com.example.project.entity.BoardEntity;
-import com.example.project.entity.BoardFileEntity;
+import com.example.project.board.entity.BoardEntity;
+import com.example.project.board.entity.BoardFileEntity;
+import com.example.project.user.entity.UserEntity;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +19,10 @@ public class BoardDTO {
     private Long id;
     private String boardTitle;
     private String boardContents;
+    private String userName;
     private int boardHits;
     private LocalDateTime boardCreatedTime;
+
 
     private List<MultipartFile> boardFile; // edit.html -> UserController 파일 담는 용도
     private List<String> originalFileName; // 원본 파일 이름
@@ -50,6 +53,7 @@ public class BoardDTO {
         boardDTO.setBoardContents(boardEntity.getBoardContents());
         boardDTO.setBoardHits(boardEntity.getBoardHits());
         boardDTO.setBoardCreatedTime(boardEntity.getCreatedTime());
+        boardDTO.setUserName(boardEntity.getUserEntity().getUserName());
 
         // boardEntity가 null이 아니고, fileAttached가 0이 아닌 경우에만 처리
         if (boardEntity != null && boardEntity.getFileAttached() != 0) {
@@ -75,6 +79,8 @@ public class BoardDTO {
 
         return boardDTO;
     }
+
+
 
 
 }

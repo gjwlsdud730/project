@@ -1,9 +1,10 @@
-package com.example.project.controller;
+package com.example.project.board.controller;
 
-import com.example.project.dto.BoardDTO;
-import com.example.project.dto.CommentDTO;
-import com.example.project.service.BoardService;
-import com.example.project.service.CommentService;
+import com.example.project.board.dto.CommentDTO;
+import com.example.project.board.service.BoardService;
+import com.example.project.board.dto.BoardDTO;
+import com.example.project.board.service.CommentService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +26,15 @@ public class BoardController {
     // 글 작성
     @GetMapping("/edit")
     public String editForm() {
-        return "edit";
+        return "board/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(@ModelAttribute BoardDTO boardDTO) throws IOException {
+    public String edit(@ModelAttribute BoardDTO boardDTO, HttpSession session) throws IOException {
+        // 세션에 저장된 userId를 writer에 저장
+//        String userName = (String) session.getAttribute("userName");
+        // DTO에 writer 설정
+        boardDTO.setUserName((String) session.getAttribute("userName"));
         boardService.edit(boardDTO);
         return "redirect:/board/paging";
     }
@@ -39,7 +44,7 @@ public class BoardController {
     public String findAll(Model model) {
         List<BoardDTO> boardDTOList = boardService.findAll();
         model.addAttribute("boardList", boardDTOList);
-        return "list";
+        return "board/list";
     }
 
     // 상세 글 조회
@@ -57,7 +62,7 @@ public class BoardController {
 
         model.addAttribute("board", boardDTO);
         model.addAttribute("page", pageable.getPageNumber());
-        return "detail";
+        return "board/detail";
     }
 
     // 글 수정
@@ -65,14 +70,14 @@ public class BoardController {
     public String updateForm(@PathVariable Long id, Model model) {
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("boardUpdate", boardDTO);
-        return "update";
+        return "board/update";
     }
 
     @PostMapping("/update")
     public String update(@ModelAttribute BoardDTO boardDTO, Model model) {
         BoardDTO board = boardService.update(boardDTO);
         model.addAttribute("board", board);
-        return "detail";
+        return "board/detail";
 
     }
 
@@ -96,7 +101,7 @@ public class BoardController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
-        return "paging";
+        return "index";
     }
 }
 

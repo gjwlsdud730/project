@@ -1,4 +1,4 @@
-package com.example.project.user.controller;
+package com.example.project;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,4 +10,7 @@ public class MainController {
     public String index() {
         return "index"; // index.html
     }
+
+
+
 }

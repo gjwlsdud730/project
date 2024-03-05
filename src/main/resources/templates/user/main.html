@@ -6,7 +6,8 @@
 </head>
 <body>
 <h2>main(로그인 성공)</h2>
-  session 값: <p th:text="${session.loginId}"></p>
+  <p th:if="${session.userName}" th:text="|${session.userName}님이 로그인 중입니다.|"></p>
+
   <a href="/user/update">내 정보 수정</a>
   <a href="/user/logout">로그아웃</a>
 </body>

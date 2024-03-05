@@ -1,7 +1,7 @@
-package com.example.project.controller;
+package com.example.project.board.controller;
 
-import com.example.project.dto.CommentDTO;
-import com.example.project.service.CommentService;
+import com.example.project.board.dto.CommentDTO;
+import com.example.project.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

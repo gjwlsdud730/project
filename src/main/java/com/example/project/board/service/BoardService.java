@@ -1,10 +1,12 @@
-package com.example.project.service;
+package com.example.project.board.service;
 
-import com.example.project.dto.BoardDTO;
-import com.example.project.entity.BoardEntity;
-import com.example.project.entity.BoardFileEntity;
-import com.example.project.repository.BoardFileRepository;
-import com.example.project.repository.BoardRepository;
+import com.example.project.board.dto.BoardDTO;
+import com.example.project.board.entity.BoardEntity;
+import com.example.project.board.entity.BoardFileEntity;
+import com.example.project.board.repository.BoardFileRepository;
+import com.example.project.board.repository.BoardRepository;
+import com.example.project.user.entity.UserEntity;
+import com.example.project.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,15 +27,27 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
+    private final UserRepository userRepository;
 
     // 글 작성 (DTO -> entity)
+    @Transactional
     public void edit(BoardDTO boardDTO) throws IOException {
         if (boardDTO.getBoardFile().get(0).isEmpty()) {
             // 첨부 파일 없음
             boardDTO.setFileAttached(0); // 파일이 없는 경우 fileAttached를 0으로 설정
-            BoardEntity boardEntity = BoardEntity.toEditEntity(boardDTO);
+
+            // 저장
+            Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(boardDTO.getUserName());
+            UserEntity userEntity = optionalUserEntity.get();
+            BoardEntity boardEntity = BoardEntity.toEditEntity(boardDTO, userEntity);
             boardRepository.save(boardEntity);
         } else {
+            // 저장
+            Optional<UserEntity> optionalUserEntity = userRepository.findByUserName(boardDTO.getUserName());
+            UserEntity userEntity = optionalUserEntity.get();
+            BoardEntity editEntity = BoardEntity.toEditEntity(boardDTO, userEntity);
+            boardRepository.save(editEntity);
+
             // 첨부 파일이 있는 경우
             BoardEntity boardEntity = BoardEntity.toEditFileEntity(boardDTO);
             Long savedId = boardRepository.save(boardEntity).getId();
@@ -45,14 +59,16 @@ public class BoardService {
                     String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
 
                     // 맥 로컬
-                    String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
+//                    String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
 
                     // 리눅스 서버
-//                     String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
+                     String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
 
                     boardFile.transferTo(new File(savePath));
 
                     BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(board, originalFilename, storedFileName);
+
+
                     boardFileRepository.save(boardFileEntity);
                 }
             }

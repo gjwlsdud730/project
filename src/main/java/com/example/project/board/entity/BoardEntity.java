@@ -1,12 +1,14 @@
-package com.example.project.entity;
+package com.example.project.board.entity;
 
-import com.example.project.dto.BoardDTO;
+import com.example.project.board.dto.BoardDTO;
+import com.example.project.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -29,6 +31,11 @@ public class BoardEntity extends BaseEntity {
     @Column
     private int fileAttached; // 파일 유무 체크
 
+    // Board:User = N:1
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_name")
+    private UserEntity userEntity;
+
     @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BoardFileEntity> boardFileEntityList = new ArrayList<>();
 
@@ -36,12 +43,13 @@ public class BoardEntity extends BaseEntity {
     private List<CommentEntity> commentEntityList = new ArrayList<>();
 
     // DTO -> entity
-    public static BoardEntity toEditEntity(BoardDTO boardDTO) {
+    public static BoardEntity toEditEntity(BoardDTO boardDTO, UserEntity userEntity) {
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.setBoardTitle(boardDTO.getBoardTitle());
         boardEntity.setBoardContents(boardDTO.getBoardContents());
         boardEntity.setBoardHits(0);
         boardEntity.setFileAttached(0); // 파일 없음.
+        boardEntity.setUserEntity(userEntity);
 
         return boardEntity;
     }

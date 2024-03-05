@@ -1,28 +1,44 @@
 package com.example.project.user.dto;
 
-import com.example.project.user.entity.MemberEntity;
+import com.example.project.user.entity.UserEntity;
+import com.example.project.user.entity.UserRole;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.catalina.User;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 // DTO: 필드로 저장한 데이터를 전달
-public class MemberDTO {
+public class UserDTO {
     private Long id;
-    private String userId;
-    private String userPassword;
-    private String userName;
 
-    public static MemberDTO toUserDTO(MemberEntity memberEntity) {
-        MemberDTO userDTO = new MemberDTO();
-        userDTO.setId(memberEntity.getId());
-        userDTO.setUserId(memberEntity.getUserId());
-        userDTO.setUserPassword(memberEntity.getUserPassword());
-        userDTO.setUserName(memberEntity.getUserName());
+    @NotBlank(message = "아이디가 비어있습니다.")
+    private String userId;
+
+    @NotBlank(message = "비밀번호가 비어있습니다.")
+    private String userPassword;
+    private String userPasswordCheck;
+
+    private String userName;
+    private String userEmail;
+    private String userPhone;
+
+    private UserRole role;
+
+
+    public static UserDTO toUserDTO(UserEntity userEntity) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(userEntity.getId());
+        userDTO.setUserId(userEntity.getUserId());
+        userDTO.setUserPassword(userEntity.getUserPassword());
+        userDTO.setUserName(userEntity.getUserName());
+        userDTO.setUserEmail(userEntity.getUserEmail());
+        userDTO.setUserPhone(userEntity.getUserPhone());
 
         return userDTO;
     }

@@ -1,10 +1,10 @@
-package com.example.project.service;
+package com.example.project.board.service;
 
-import com.example.project.dto.CommentDTO;
-import com.example.project.entity.BoardEntity;
-import com.example.project.entity.CommentEntity;
-import com.example.project.repository.BoardRepository;
-import com.example.project.repository.CommentRepository;
+import com.example.project.board.dto.CommentDTO;
+import com.example.project.board.repository.BoardRepository;
+import com.example.project.board.repository.CommentRepository;
+import com.example.project.board.entity.BoardEntity;
+import com.example.project.board.entity.CommentEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

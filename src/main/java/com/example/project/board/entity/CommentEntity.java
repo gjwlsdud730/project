@@ -1,6 +1,6 @@
-package com.example.project.entity;
+package com.example.project.board.entity;
 
-import com.example.project.dto.CommentDTO;
+import com.example.project.board.dto.CommentDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
