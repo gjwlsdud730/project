@@ -23,10 +23,10 @@
     <td>
       <!-- rest api /user/1 -->
       <!-- | 경로상에 찍히는 값 | -->
-      <a th:href="@{|/user/${user.id}|}">조회</a>
+      <a th:href="@{|/templates/member/${user.id}|}">조회</a>
     </td>
     <td>
-      <a th:href="@{|/user/delete/${user.id}|}">삭제</a>
+      <a th:href="@{|/templates/member/delete/${user.id}|}">삭제</a>
     </td>
   </tr>
 </table>

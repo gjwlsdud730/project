@@ -4,13 +4,13 @@ import com.example.project.user.dto.UserDTO;
 import com.example.project.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.RequestingUserName;
 import java.util.List;
 
-@Controller
+@org.springframework.stereotype.Controller
 @RequiredArgsConstructor
 public class UserController {
     // 생성자 주입
@@ -30,23 +30,34 @@ public class UserController {
 
     // 로그인 페이지 출력 요청
     @GetMapping("/user/login")
-    public String loginFrom() {
+    public String loginFrom(HttpSession session) {
+        // 세션에 userId가 있는지 확인
+        if (session.getAttribute("userId") != null) {
+            // 이미 로그인이 되어 있으면 메인 페이지로 리다이렉트
+            return "redirect:/user/main";
+        }
+        // 로그인이 되어있지 않다면 로그인 페이지로 이동
         return "user/login";
     }
 
     @PostMapping("/user/login")
     public String login(@ModelAttribute UserDTO userDTO, HttpSession session) {
         UserDTO loginResult = userService.login(userDTO);
+
         if (loginResult != null) {
             // login 성공
-            session.setAttribute("loginId", loginResult.getUserId());
-            return "user/main";
+            session.setAttribute("userId", loginResult.getUserId());
+            session.setAttribute("userName", loginResult.getUserName());
+            return "index";
 
         } else {
             // login 실패
             return "user/login";
         }
     }
+
+    // 메인 페이지
+
 
 
     // 회원 목록 페이지 출력 요청
@@ -71,7 +82,7 @@ public class UserController {
     // 회원정보 수정 출력 요청
     @GetMapping("/user/update")
     public String updateForm(HttpSession session, Model model) {
-        String myUserId = (String) session.getAttribute("loginId");
+        String myUserId = (String) session.getAttribute("userId");
         UserDTO userDTO = userService.updateForm(myUserId);
         model.addAttribute("updateUser", userDTO);
         return "user/update";

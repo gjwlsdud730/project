@@ -1,6 +1,6 @@
 package com.example.project.user.entity;
 
-import com.example.project.user.dto.UserDTO;
+import com.example.project.user.dto.MemberDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Table(name = "user_table")
-public class UserEntity {
+public class MemberEntity {
     @Id // pk 지정
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
     private Long id;
@@ -21,23 +21,23 @@ public class UserEntity {
     @Column
     private String userName;
 
-    public static UserEntity toUserEntity(UserDTO userDTO) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(userDTO.getUserId());
-        userEntity.setUserPassword(userDTO.getUserPassword());
-        userEntity.setUserName(userDTO.getUserName());
+    public static MemberEntity toUserEntity(MemberDTO memberDTO) {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setUserId(memberDTO.getUserId());
+        memberEntity.setUserPassword(memberDTO.getUserPassword());
+        memberEntity.setUserName(memberDTO.getUserName());
 
-        return userEntity;
+        return memberEntity;
     }
 
-    public static UserEntity toUpdateUserEntity(UserDTO userDTO) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(userDTO.getId());
-        userEntity.setUserId(userDTO.getUserId());
-        userEntity.setUserPassword(userDTO.getUserPassword());
-        userEntity.setUserName(userDTO.getUserName());
+    public static MemberEntity toUpdateUserEntity(MemberDTO memberDTO) {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setId(memberDTO.getId());
+        memberEntity.setUserId(memberDTO.getUserId());
+        memberEntity.setUserPassword(memberDTO.getUserPassword());
+        memberEntity.setUserName(memberDTO.getUserName());
 
-        return userEntity;
+        return memberEntity;
     }
 
 }
