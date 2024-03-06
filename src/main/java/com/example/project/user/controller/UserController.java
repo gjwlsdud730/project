@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.RequestingUserName;
 import java.util.List;
 
 @org.springframework.stereotype.Controller
@@ -59,7 +58,6 @@ public class UserController {
     // 메인 페이지
 
 
-
     // 회원 목록 페이지 출력 요청
     @GetMapping("/user/")
     public String findAll(Model model) {
@@ -71,19 +69,29 @@ public class UserController {
     }
 
     // 회원 목록 상세 조회 출력 요청
-    // @PathVariable: 경로상의 값을 가져올 때 사용
-    @GetMapping("/user/{id}")
-    public String findById(@PathVariable Long id, Model model) {
-        UserDTO userDTO = userService.findById(id);
+    @GetMapping("/user/profile")
+    public String findById(HttpSession session, Model model) {
+        String myUserId = (String) session.getAttribute("userId");
+        UserDTO userDTO = userService.profileForm(myUserId);
         model.addAttribute("user", userDTO);
-        return "user/detail";
+        return "user/profile";
     }
 
-    // 회원정보 수정 출력 요청
+//    // 회원 목록 상세 조회 출력 요청
+//    // @PathVariable: 경로상의 값을 가져올 때 사용
+//    @GetMapping("/user/{id}")
+//    public String findById(@PathVariable Long id, Model model) {
+//        UserDTO userDTO = userService.findById(id);
+//        model.addAttribute("user", userDTO);
+//        return "user/profile";
+//    }
+
+
+    // 프로필 : 회원정보 수정 출력 요청
     @GetMapping("/user/update")
-    public String updateForm(HttpSession session, Model model) {
+    public String profileForm(HttpSession session, Model model) {
         String myUserId = (String) session.getAttribute("userId");
-        UserDTO userDTO = userService.updateForm(myUserId);
+        UserDTO userDTO = userService.profileForm(myUserId);
         model.addAttribute("updateUser", userDTO);
         return "user/update";
     }
@@ -91,7 +99,7 @@ public class UserController {
     @PostMapping("/user/update")
     public String update(@ModelAttribute UserDTO userDTO) {
         userService.update(userDTO);
-        return "redirect:/user/" + userDTO.getId();
+        return "redirect:/user/profile";
     }
 
     // 회원정보 삭제 출력 요청

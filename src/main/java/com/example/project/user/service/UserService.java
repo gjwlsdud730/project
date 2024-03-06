@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public UserDTO login(UserDTO userDTO) {
-        // 이메일을 DB에서 조회
+        // id을 DB에서 조회
         Optional<UserEntity> byUserId = userRepository.findByUserId(userDTO.getUserId());
 
         // 조회한 비밀번호가 사용자가 입력한 값과 일치하는지 확인
@@ -46,7 +46,7 @@ public class UserService {
         }
     }
 
-    // member 조회
+    // user 조회
     public List<UserDTO> findAll() {
         List<UserEntity> userEntityList = userRepository.findAll();
         List<UserDTO> userDTOList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class UserService {
         return userDTOList;
     }
 
-    // member 상세조회
+    // user 상세조회
     public UserDTO findById(Long id) {
         Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
         if (optionalUserEntity.isPresent()) {
@@ -67,8 +67,8 @@ public class UserService {
         }
     }
 
-    // update
-    public UserDTO updateForm(String myUserId) {
+    // 프로필
+    public UserDTO profileForm(String myUserId) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserId(myUserId);
         if (optionalUserEntity.isPresent()) {
             return UserDTO.toUserDTO(optionalUserEntity.get());

@@ -9,19 +9,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
-<body th:replace="~{/layout/baseLayout :: body}">
+<body>
 
-<div th:replace="~{/layout/baseLayout :: top}"></div>
+<div th:replace="~{/layout/layoutIndex :: body}">
 
-<div th:replace="~{/layout/baseLayout :: content}">
-  <h2>home</h2>
-<!--  <button onclick="editReq()">글작성</button>-->
-<!--  <button onclick="pagingReq()">글목록</button>-->
-<!--  <button onclick="listReq()">boardDB</button>-->
-</div>
-
-
-<div th:replace="/layout/baseLayout.html :: bottom">
+  <div th:fragment="content">
+    <h2>home</h2>
+  </div>
 
 </div>
 
@@ -47,6 +41,8 @@
 </script>
 </body>
 </html>
+
+
 
 
 <!--<a href="/user/">userDB</a> <br><br>-->
