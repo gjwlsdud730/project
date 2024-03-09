@@ -9,10 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
     private String resourcePath = "/upload/**"; // view에서 접근할 경로
 
     // 맥 로컬
-    private String savePath = "file:///Users/jinyoung/springboot_img/"; // 실제 파일 저장 경로
+//    private String savePath = "file:///Users/jinyoung/springboot_img/"; // 실제 파일 저장 경로
 
     // 리눅스 서버
-//    private String savePath = "file:///home/gjwlsdud730/springboot_img/"; // 실제 파일 저장 경로
+    private String savePath = "file:///home/gjwlsdud730/springboot_img/"; // 실제 파일 저장 경로
 
 
     @Override

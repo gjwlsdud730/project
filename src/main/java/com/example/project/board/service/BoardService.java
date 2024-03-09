@@ -54,10 +54,10 @@ public class BoardService {
                 String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
 
                 // 맥 로컬
-                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
+//                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
 
                 // 리눅스 서버
-//                 String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
+                 String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
 
                 boardFile.transferTo(new File(savePath));
 
@@ -139,10 +139,10 @@ public class BoardService {
                 String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
 
                 // 맥 로컬
-                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
+//                String savePath = "/Users/jinyoung/springboot_img/" + storedFileName;
 
                 // 리눅스 서버
-//                 String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
+                 String savePath = "/home/gjwlsdud730/springboot_img/" + storedFileName;
 
                 // 파일 저장
                 boardFile.transferTo(new File(savePath));
