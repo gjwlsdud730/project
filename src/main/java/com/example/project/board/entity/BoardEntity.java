@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -33,7 +32,7 @@ public class BoardEntity extends BaseEntity {
 
     // Board:User = N:1
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_name")
+    @JoinColumn(name = "user_name", referencedColumnName = "id")
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -54,25 +53,45 @@ public class BoardEntity extends BaseEntity {
         return boardEntity;
     }
 
-    // update
-    public static BoardEntity toUpdateEntity(BoardDTO boardDTO) {
-        BoardEntity boardEntity = new BoardEntity();
-        boardEntity.setId(boardDTO.getId());
-        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
-        boardEntity.setBoardContents(boardDTO.getBoardContents());
-        boardEntity.setBoardHits(boardDTO.getBoardHits());
-
-        return boardEntity;
-    }
-
     // file edit
-    public static BoardEntity toEditFileEntity(BoardDTO boardDTO) {
+    public static BoardEntity toEditFileEntity(BoardDTO boardDTO, UserEntity userEntity) {
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.setBoardTitle(boardDTO.getBoardTitle());
         boardEntity.setBoardContents(boardDTO.getBoardContents());
         boardEntity.setBoardHits(0);
         boardEntity.setFileAttached(1); // 파일 있음.
+        boardEntity.setUserEntity(userEntity);
+
 
         return boardEntity;
     }
+
+    // update
+    public static BoardEntity toUpdateEntity(BoardDTO boardDTO, UserEntity userEntity, BoardEntity existingBoardEntity) {
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setId(existingBoardEntity.getId());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setBoardHits(boardDTO.getBoardHits());
+        boardEntity.setFileAttached(0); // 파일 없음.
+        boardEntity.setUserEntity(userEntity);
+
+        return boardEntity;
+    }
+
+    // file update
+    public static BoardEntity toUptateFileEntity(BoardDTO boardDTO, UserEntity userEntity, BoardEntity existingBoardEntity) {
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setId(existingBoardEntity.getId());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setBoardHits(0);
+        boardEntity.setFileAttached(1); // 파일 있음.
+        boardEntity.setUserEntity(userEntity);
+
+
+        return boardEntity;
+    }
+
+
 }

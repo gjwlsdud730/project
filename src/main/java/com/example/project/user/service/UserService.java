@@ -16,6 +16,7 @@ public class UserService {
     // 생성자 주입
     private final UserRepository userRepository;
 
+    // Entity에 저장
     public void save(UserDTO userDTO) {
         // DTO -> entity
         UserEntity userEntity = UserEntity.toUserEntity(userDTO);
@@ -24,6 +25,7 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+    // 로그인
     public UserDTO login(UserDTO userDTO) {
         // id을 DB에서 조회
         Optional<UserEntity> byUserId = userRepository.findByUserId(userDTO.getUserId());
@@ -67,8 +69,8 @@ public class UserService {
         }
     }
 
-    // 프로필
-    public UserDTO profileForm(String myUserId) {
+    // user 상세조회 (session)
+    public UserDTO findById(String myUserId) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserId(myUserId);
         if (optionalUserEntity.isPresent()) {
             return UserDTO.toUserDTO(optionalUserEntity.get());
@@ -77,11 +79,12 @@ public class UserService {
         }
     }
 
+    // 업데이트
     public void update(UserDTO userDTO) {
         userRepository.save(UserEntity.toUpdateUserEntity(userDTO));
     }
 
-    // delete
+    // 삭제
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }

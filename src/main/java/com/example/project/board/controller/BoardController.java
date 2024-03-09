@@ -15,40 +15,46 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
     private final CommentService commentService;
 
     // 글 작성
-    @GetMapping("/edit")
-    public String editForm() {
+    @GetMapping("/board/edit")
+    public String editForm(HttpSession session) {
+        // 세션에 userId가 있는지 확인
+        if (session.getAttribute("userId") == null) {
+            // 로그인이 되어 있지 않으면 로그인 페이지로 리다이렉트
+            return "redirect:/user/login";
+        }
         return "board/edit";
     }
 
-    @PostMapping("/edit")
+    @PostMapping("/board/edit")
     public String edit(@ModelAttribute BoardDTO boardDTO, HttpSession session) throws IOException {
         // 세션에 저장된 userId를 writer에 저장
-//        String userName = (String) session.getAttribute("userName");
+        String userName = (String) session.getAttribute("userName");
         // DTO에 writer 설정
-        boardDTO.setUserName((String) session.getAttribute("userName"));
+        boardDTO.setUserName(userName);
         boardService.edit(boardDTO);
-        return "redirect:/board/paging";
+
+        return "redirect:/";
     }
 
     // 글 목록
-    @GetMapping("/")
-    public String findAll(Model model) {
-        List<BoardDTO> boardDTOList = boardService.findAll();
-        model.addAttribute("boardList", boardDTOList);
-        return "board/list";
-    }
+//    @GetMapping("/")
+//    public String findAll(Model model) {
+//        List<BoardDTO> boardDTOList = boardService.findAll();
+//        model.addAttribute("boardList", boardDTOList);
+//        return "board/list";
+//    }
 
     // 상세 글 조회
-    @GetMapping("/{id}")
+    @GetMapping("board/{id}")
     public String findById(@PathVariable Long id, Model model,
                            @PageableDefault(page=1) Pageable pageable) {
         // 조회수 증가
@@ -66,43 +72,65 @@ public class BoardController {
     }
 
     // 글 수정
-    @GetMapping("/update/{id}")
-    public String updateForm(@PathVariable Long id, Model model) {
+    @GetMapping("/board/update/{id}")
+    public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("boardUpdate", boardDTO);
-        return "board/update";
+
+        Long userIndex = (Long) session.getAttribute("userIndex");
+        Long boardDTOUserIndex = boardDTO.getUserIndex();
+
+        if (Objects.equals(userIndex, boardDTOUserIndex)) {
+            return "board/update";
+        }
+
+        return "redirect:/";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute BoardDTO boardDTO, Model model) {
+    @PostMapping("/board/update")
+    public String update(@ModelAttribute BoardDTO boardDTO, Model model, HttpSession session) throws IOException  {
+        // 세션에 저장된 userId를 writer에 저장
+        String userName = (String) session.getAttribute("userName");
+        // DTO에 writer 설정
+        boardDTO.setUserName(userName);
+
         BoardDTO board = boardService.update(boardDTO);
         model.addAttribute("board", board);
-        return "board/detail";
+
+        return "redirect:/board/" + board.getId();
 
     }
 
     // 글 삭제
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        boardService.delete(id);
-        return "redirect:/board/paging";
+    @GetMapping("board/delete/{id}")
+    public String delete(@PathVariable Long id, HttpSession session) {
+        BoardDTO boardDTO = boardService.findById(id);
+
+        Long userIndex = (Long) session.getAttribute("userIndex");
+        Long boardDTOUserIndex = boardDTO.getUserIndex();
+
+        if (Objects.equals(userIndex, boardDTOUserIndex)) {
+            boardService.delete(id);
+            return "redirect:/";
+        }
+        return "redirect:/";
     }
 
     // 페이징
     // /board/paging?page=1
-    @GetMapping("/paging")
-    public String paging(@PageableDefault(page = 1)Pageable pageable, Model model) {
-        Page<BoardDTO> boardList = boardService.paging(pageable);
-        int blockLimit = 5;
-        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1; // 1 4 7 10 ~~
-        int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
-
-        model.addAttribute("boardList", boardList);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
-        return "index";
-    }
+//    @GetMapping("/")
+//    public String paging(@PageableDefault(page = 1)Pageable pageable, Model model) {
+//        Page<BoardDTO> boardList = boardService.paging(pageable);
+//        int blockLimit = 5;
+//        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1; // 1 4 7 10 ~~
+//        int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
+//
+//        model.addAttribute("boardList", boardList);
+//        model.addAttribute("startPage", startPage);
+//        model.addAttribute("endPage", endPage);
+//
+//        return "index";
+//    }
 }
 
 

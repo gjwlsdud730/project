@@ -22,7 +22,7 @@ public class UserEntity {
     private String userId;
     @Column(nullable = false, length = 20)
     private String userPassword;
-    @Column(length = 20)
+    @Column(length = 20, unique = true)
     private String userName;
 
     private String userEmail;
@@ -43,7 +43,6 @@ public class UserEntity {
         userEntity.setUserPassword(userDTO.getUserPassword());
         userEntity.setUserName(userDTO.getUserName());
         userEntity.setUserEmail(userDTO.getUserEmail());
-        userEntity.setUserPhone(userDTO.getUserPhone());
         userEntity.setRole(userDTO.getRole());
 
         return userEntity;
@@ -56,7 +55,6 @@ public class UserEntity {
         userEntity.setUserPassword(userDTO.getUserPassword());
         userEntity.setUserName(userDTO.getUserName());
         userEntity.setUserEmail(userDTO.getUserEmail());
-        userEntity.setUserPhone(userEntity.getUserPhone());
 
         return userEntity;
     }

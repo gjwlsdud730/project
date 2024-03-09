@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BoardDTO {
     private Long id;
+    private Long userIndex;
     private String boardTitle;
     private String boardContents;
     private String userName;
@@ -38,12 +39,15 @@ public class BoardDTO {
 
     // DTO 생성자
     // TODO: 3/1/24  (나중에 user추가)
-    public BoardDTO(Long id, String boardTitle, int boardHits, LocalDateTime boardCreatedTime) {
+    public BoardDTO(Long id, Long userIndex,String boardTitle, String userName,int boardHits, LocalDateTime boardCreatedTime) {
         this.id = id;
+        this.userIndex = userIndex;
         this.boardTitle = boardTitle;
+        this.userName = userName;
         this.boardHits = boardHits;
         this.boardCreatedTime = boardCreatedTime;
     }
+
 
     // entity -> DTO
     public static BoardDTO toBoardDTO(BoardEntity boardEntity) {
@@ -53,7 +57,15 @@ public class BoardDTO {
         boardDTO.setBoardContents(boardEntity.getBoardContents());
         boardDTO.setBoardHits(boardEntity.getBoardHits());
         boardDTO.setBoardCreatedTime(boardEntity.getCreatedTime());
-        boardDTO.setUserName(boardEntity.getUserEntity().getUserName());
+        // getUserEntity()가 null이 아닌 경우에만 처리
+        if (boardEntity.getUserEntity() != null) {
+            boardDTO.setUserName(boardEntity.getUserEntity().getUserName());
+            boardDTO.setUserIndex(boardEntity.getUserEntity().getId());
+        } else {
+            // userEntity가 null인 경우의 로직 수행
+            boardDTO.setUserName(null);
+            boardDTO.setUserIndex(null);
+        }
 
         // boardEntity가 null이 아니고, fileAttached가 0이 아닌 경우에만 처리
         if (boardEntity != null && boardEntity.getFileAttached() != 0) {
