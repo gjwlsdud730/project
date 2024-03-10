@@ -31,9 +31,5 @@ public class MainController {
         model.addAttribute("endPage", endPage);
 
         return "index";
-
     }
-
-
-
 }
