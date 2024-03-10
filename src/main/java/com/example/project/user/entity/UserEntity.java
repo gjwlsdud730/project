@@ -1,6 +1,7 @@
 package com.example.project.user.entity;
 
 import com.example.project.board.entity.BoardEntity;
+import com.example.project.board.entity.CommentEntity;
 import com.example.project.user.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,6 +36,9 @@ public class UserEntity {
     // User:Board = 1:N
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BoardEntity> boardEntityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CommentEntity> CommentEntityList = new ArrayList<>();
 
 
     public static UserEntity toUserEntity(UserDTO userDTO) {

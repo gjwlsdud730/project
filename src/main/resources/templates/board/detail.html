@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>detail</title>
   <!-- jquery cdn -->
-  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <!-- bootstrap icon-->
@@ -28,7 +28,7 @@
         <hr>
         <div class="box" style="min-height: 5em;">
           <p th:utext="${board.boardContents}"></p>
-<!--          session 값 확인: <p th:text="${session.userIndex}"></p>-->
+          <!--          session 값 확인: <p th:text="${session.userIndex}"></p>-->
           <div th:if="${board.fileAttached == 1}">
             <p th:each="fileName: ${board.storedFileName}">
               <img th:src="@{|/upload/${fileName}|}" alt="">
@@ -41,79 +41,75 @@
           <button onclick="deleteReq()">삭제</button>
           <hr>
         </div>
+        <div>
+
+          <div id="comment-write" class="d-flex flex-column mb-3">
+            <input type="hidden" id="boardId" th:value="${board.id}">
+            <input type="hidden" id="commentWriter" th:value="${loggedInUser}">
+
+            <!-- 댓글 내용 입력 -->
+            <textarea id="commentContents" class="form-control mb-2" placeholder="댓글을 입력하세요." style="height: 3em;"></textarea>
+
+            <!-- 댓글 작성 버튼 -->
+            <div class="d-flex justify-content-end">
+              <button id="comment-write-btn" class="btn btn-dark" onclick="commentWrite()">댓글작성</button>
+            </div>
+          </div>
+
+          <div id="comment-list" class="border rounded">
+            <table class="table">
+              <tbody>
+              <tr th:each="comment: ${commentList}">
+                <!-- 댓글 작성자 (볼드체) 및 작성 시간 (작게) -->
+                <td>
+                  <span class="font-weight-bold" th:text="${comment.commentWriter}"></span>
+                  <div class="text-muted small" th:text="${#temporals.format(comment.commentCreatedTime, 'yyyy-MM-dd HH.mm')}"> </div>
+                  <!-- 댓글 내용 (패딩 추가) -->
+                  <div class="pt-2" th:text="${comment.commentContents}"></div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-
-
-<!--    &lt;!&ndash; 댓글 작성 부분 &ndash;&gt;-->
-<!--    <div id="comment-write">-->
-<!--      <input type="text" id="commentWriter" placeholder="작성자">-->
-<!--      <input type="text" id="commentContents" placeholder="내용">-->
-<!--      <button id="comment-write-btn" onclick="commentWrite()">댓글작성</button>-->
-<!--    </div>-->
-
-<!--    &lt;!&ndash; 댓글 출력 부분 &ndash;&gt;-->
-<!--    <div id="comment-list">-->
-<!--      <table>-->
-<!--        <tr>-->
-<!--          <th>댓글번호</th>-->
-<!--          <th>작성자</th>-->
-<!--          <th>내용</th>-->
-<!--          <th>작성시간</th>-->
-<!--        </tr>-->
-<!--        <tr th:each="comment: ${commentList}">-->
-<!--          <td th:text="${comment.id}"></td>-->
-<!--          <td th:text="${comment.commentWriter}"></td>-->
-<!--          <td th:text="${comment.commentContents}"></td>-->
-<!--          <td th:text="${comment.commentCreatedTime}"></td>-->
-<!--        </tr>-->
-<!--      </table>-->
-<!--    </div>-->
-
-
 </div>
-
-
-
-
-
-
 
 </body>
 <script th:inline="javascript">
     const commentWrite = () => {
         const writer = document.getElementById("commentWriter").value;
         const contents = document.getElementById("commentContents").value;
+        // 숨겨진 입력 필드에서 게시글 ID 읽기
+        const boardId = document.getElementById("boardId").value;
+
         console.log("작성자: ", writer);
         console.log("내용: ", contents);
-        const id = [[${board.id}]]; // 게시글 번호
+        console.log("게시글 ID: ", boardId); // 콘솔에 게시글 ID 출력
+
         $.ajax({
-           // 요청방식: post, 요청주소: /comment/save, 요청데이터: 작성자, 작성내용, 게시글 번호
             "type": "post",
             "url": "/comment/save",
             data: {
                 "commentWriter": writer,
                 "commentContents": contents,
-                "boardId": id
+                "boardId": boardId // 수정된 부분: 게시글 ID 전송
             },
             success: function (res) {
                 console.log("요청성공", res);
-                let output = "<table>";
-                output += "<tr><th>댓글번호</th>";
-                output += "<th>작성자</th>";
-                output += "<th>내용</th>";
-                output += "<th>작성시간</th></tr>";
+                let output = '<div class="border rounded"><table class="table"><tbody>';
                 for (let i in res) {
-                    output += "<tr>";
-                    output += "<td>" + res[i].id + "</td>";
-                    output += "<td>" + res[i].commentWriter + "</td>";
-                    output += "<td>" + res[i].commentContents + "</td>";
-                    output += "<td>" + res[i].commentCreatedTime + "</td>";
-                    output += "</tr>";
+                    output += '<tr>';
+                    output += '<td>';
+                    output += '<span class="font-weight-bold">' + res[i].commentWriter + '</span>';
+                    output += '<div class="text-muted small">' + res[i].commentCreatedTime + '</div>';
+                    output += '<div class="pt-2">' + res[i].commentContents + '</div>';
+                    output += '</td>';
+                    output += '</tr>';
                 }
-                output += "</table>";
+                output += '</tbody></table></div>';
                 document.getElementById('comment-list').innerHTML = output;
                 document.getElementById('commentWriter').value = '';
                 document.getElementById('commentContents').value = '';
@@ -124,18 +120,18 @@
         });
     }
 
-  const updateReq = () => {
-      console.log("수정 요청");
-      const id = [[${board.id}]];
-      location.href = "/board/update/" + id;
-  }
-  const deleteReq = () => {
-      console.log("삭제 요청");
-      const id = [[${board.id}]];
-      location.href = "/board/delete/" + id;
-  }
+    const updateReq = () => {
+        console.log("수정 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/update/" + id;
+    }
+    const deleteReq = () => {
+        console.log("삭제 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/delete/" + id;
+    }
 </script>
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 

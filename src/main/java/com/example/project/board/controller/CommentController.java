@@ -2,10 +2,13 @@ package com.example.project.board.controller;
 
 import com.example.project.board.dto.CommentDTO;
 import com.example.project.board.service.CommentService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +22,15 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/save")
-    public ResponseEntity save(@ModelAttribute CommentDTO commentDTO) {
-        Long saveResult = commentService.save(commentDTO);
-        if (saveResult != null) {
-            // 작성 성공하면 댓글 목록을 가져와서 리턴
-            // 댓글 목록 : 해당 게시글의 댓글 전체 => 해당 게시글 id를 기준으로 데이터 가져오기
+    public ResponseEntity<?> save(@ModelAttribute CommentDTO commentDTO, Model model) {
+        try {
+            Long saveResult = commentService.save(commentDTO);
             List<CommentDTO> commentDTOList = commentService.findAll(commentDTO.getBoardId());
-
             return new ResponseEntity<>(commentDTOList, HttpStatus.OK);
-
-        } else {
-            return new ResponseEntity<>("해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("댓글 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 }

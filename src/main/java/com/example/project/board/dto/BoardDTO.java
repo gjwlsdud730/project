@@ -39,7 +39,7 @@ public class BoardDTO {
 
     // DTO 생성자
     // TODO: 3/1/24  (나중에 user추가)
-    public BoardDTO(Long id, Long userIndex,String boardTitle, String userName,int boardHits, LocalDateTime boardCreatedTime) {
+    public BoardDTO(Long id, Long userIndex, String boardTitle, String userName,int boardHits, LocalDateTime boardCreatedTime) {
         this.id = id;
         this.userIndex = userIndex;
         this.boardTitle = boardTitle;

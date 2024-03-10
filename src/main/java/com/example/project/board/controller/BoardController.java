@@ -56,11 +56,18 @@ public class BoardController {
     // 상세 글 조회
     @GetMapping("board/{id}")
     public String findById(@PathVariable Long id, Model model,
-                           @PageableDefault(page=1) Pageable pageable) {
+                           @PageableDefault(page=1) Pageable pageable,
+                           HttpSession session, CommentDTO commentDTO) {
         // 조회수 증가
         boardService.updateHits(id);
 
         BoardDTO boardDTO = boardService.findById(id);
+
+        // 세션에 저장된 userId를 writer에 저장
+        String userName = (String) session.getAttribute("userName");
+        // DTO에 writer 설정
+        commentDTO.setCommentWriter(userName);
+        model.addAttribute("loggedInUser", commentDTO.getCommentWriter());
 
         // 댓글 목록 가져오기
         List<CommentDTO> commentDTOList = commentService.findAll(id);
