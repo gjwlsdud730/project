@@ -43,50 +43,67 @@
         </div>
         <div>
 
-          <div id="comment-write" class="d-flex flex-column mb-3">
-            <input type="hidden" id="boardId" th:value="${board.id}">
-            <input type="hidden" id="commentWriter" th:value="${loggedInUser}">
-
-            <!-- 댓글 내용 입력 -->
-            <textarea id="commentContents" class="form-control mb-2" placeholder="댓글을 입력하세요." style="height: 3em;"></textarea>
-
-            <!-- 댓글 작성 버튼 -->
-            <div class="d-flex justify-content-end">
-              <button id="comment-write-btn" class="btn btn-dark" onclick="commentWrite()">댓글작성</button>
+        <div class="container mt-4">
+          <!-- 댓글 입력 섹션 -->
+          <div id="comment-write" class="card mb-3">
+            <div class="card-body">
+              <input type="hidden" id="boardId" th:value="${board.id}">
+              <input type="hidden" id="commentWriter" th:value="${loggedInUser}">
+              <textarea id="commentContent" class="form-control mb-2" placeholder="댓글을 입력하세요." style="height: 3em;"></textarea>
+              <div class="d-flex justify-content-end">
+                <button id="comment-write-btn" class="btn btn-dark" onclick="commentWrite()">댓글작성</button>
+              </div>
             </div>
           </div>
 
-          <div id="comment-list" class="border rounded">
-            <table class="table">
-              <tbody>
-              <tr th:each="comment: ${commentList}">
-                <!-- 댓글 작성자 (볼드체) 및 작성 시간 (작게) -->
-                <td>
-                  <span class="font-weight-bold" th:text="${comment.commentWriter}"></span>
-                  <div class="text-muted small" th:text="${#temporals.format(comment.commentCreatedTime, 'yyyy-MM-dd HH.mm')}"> </div>
-                  <!-- 댓글 내용 (패딩 추가) -->
-                  <div class="pt-2" th:text="${comment.commentContents}"></div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
+          <!-- 댓글 목록 섹션 -->
+          <div id="comment-list" class="card">
+            <div class="card-body">
+              <table class="table">
+                <tbody>
+                <tr th:each="comment: ${commentList}">
+                  <td>
+                    <span class="font-weight-bold" th:text="${comment.commentWriter}"></span>
+                    <div class="text-muted small" th:text="${#temporals.format(comment.commentCreatedTime, 'yyyy-MM-dd HH.mm')}"></div>
+                    <div class="pt-2" th:text="${comment.commentContent}"></div>
+                    <!-- 수정 가능 여부 확인 -->
+                    <div th:if="${session.userIndex == comment.userIndex}" class="mt-2">
+                      <!-- 수정 버튼 -->
+                      <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-dark btn-sm" onclick="showEditForm(this)">수정</button>
+                      </div>
+                      <!-- 댓글 수정 폼 (숨김 처리) -->
+                      <div th:id="'editForm-' + ${comment.id}" class="edit-form d-none mt-2">
+                        <input type="hidden" class="commentId" th:value="${comment.id}"/>
+                        <input type="text" class="form-control form-control-sm mb-2 commentContent" th:value="${comment.commentContent}" placeholder="댓글 내용"/>
+                        <div class="d-flex justify-content-end">
+                          <button type="button" class="btn btn-sm btn-dark mr-2" th:onclick="'updateComment(\'' + ${comment.id} + '\')'">저장</button>
+                          <button type="button" class="btn btn-sm btn-secondary" onclick="hideEditForm(this)">취소</button>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
+</div>
 </body>
 <script th:inline="javascript">
     const commentWrite = () => {
         const writer = document.getElementById("commentWriter").value;
-        const contents = document.getElementById("commentContents").value;
+        const content = document.getElementById("commentContent").value;
         // 숨겨진 입력 필드에서 게시글 ID 읽기
         const boardId = document.getElementById("boardId").value;
 
         console.log("작성자: ", writer);
-        console.log("내용: ", contents);
+        console.log("내용: ", content);
         console.log("게시글 ID: ", boardId); // 콘솔에 게시글 ID 출력
 
         $.ajax({
@@ -94,31 +111,90 @@
             "url": "/comment/save",
             data: {
                 "commentWriter": writer,
-                "commentContents": contents,
+                "commentContent": content,
                 "boardId": boardId // 수정된 부분: 게시글 ID 전송
             },
             success: function (res) {
                 console.log("요청성공", res);
-                let output = '<div class="border rounded"><table class="table"><tbody>';
+                let output = '<div class="card-body"><table class="table"><tbody>';
                 for (let i in res) {
                     output += '<tr>';
                     output += '<td>';
                     output += '<span class="font-weight-bold">' + res[i].commentWriter + '</span>';
                     output += '<div class="text-muted small">' + res[i].commentCreatedTime + '</div>';
-                    output += '<div class="pt-2">' + res[i].commentContents + '</div>';
+                    output += '<div class="pt-2">' + res[i].commentContent + '</div>';
+                    output += '<div class="mt-2">';
+                    output += '<div class="d-flex justify-content-end">';
+                    output += '<button type="button" class="btn btn-dark btn-sm" onclick="showEditForm(this)">수정</button>';
+                    output += '</div>';
+                    output += '<div class="edit-form d-none mt-2">';
+                    output += '<input type="hidden" id="commentId" value="' + res[i].commentId + '"/>';
+                    output += '<input type="text" class="form-control form-control-sm mb-2" id="commentContent" placeholder="댓글 내용"/>';
+                    output += '<div class="d-flex justify-content-end">';
+                    output += '<button type="button" class="btn btn-sm btn-dark mr-2" onclick="updateComment()">저장</button>';
+                    output += '<button type="button" class="btn btn-sm btn-secondary" onclick="hideEditForm(this)">취소</button>';
+                    output += '</div>';
+                    output += '</div>';
+                    output += '</div>';
                     output += '</td>';
                     output += '</tr>';
                 }
                 output += '</tbody></table></div>';
                 document.getElementById('comment-list').innerHTML = output;
-                document.getElementById('commentWriter').value = '';
-                document.getElementById('commentContents').value = '';
+                // 입력 필드 초기화
+                document.getElementById('commentContent').value = '';
             },
             error: function (err) {
                 console.log("요청실패", err);
             }
         });
     }
+
+    const updateComment = (commentId) => {
+        // 댓글 수정 폼에서 각 요소를 찾습니다.
+        const writer = document.getElementById("commentWriter").value;
+        const boardId = document.getElementById("boardId").value;
+        const editForm = document.getElementById(`editForm-${commentId}`);
+        const commentContentElement = editForm.querySelector('.commentContent');
+        const commentContent = commentContentElement ? commentContentElement.value : '';
+
+
+        console.log("작성자: ", writer);
+        console.log("게시글 ID: ", boardId); // 콘솔에 게시글 ID 출력
+        console.log("댓글 ID: ", commentId);
+        console.log("내용: ", commentContent);
+
+        $.ajax({
+            url: "/comment/update",
+            type: "post",
+            data: {
+                "commentWriter": writer,
+                "boardId": boardId,// 수정된 부분: 게시글 ID 전송
+                "id": commentId,
+                "commentContent": commentContent
+            },
+            success: function (res) {
+                console.log("요청성공", res);
+                alert('댓글이 수정되었습니다.');
+            },
+            error: function (err) {
+                console.log("요청실패", err);
+            }
+        });
+    }
+
+    // 수정 버튼 클릭 시 수정 폼 표시
+    const showEditForm = (button) => {
+        const editForm = button.parentElement.nextElementSibling;
+        editForm.classList.remove('d-none');
+    }
+
+    // 취소 버튼 클릭 시 수정 폼 숨김
+    const hideEditForm = (button) => {
+        const editForm = button.parentElement.parentElement;
+        editForm.classList.add('d-none');
+    }
+
 
     const updateReq = () => {
         console.log("수정 요청");

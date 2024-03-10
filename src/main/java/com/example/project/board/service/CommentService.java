@@ -10,12 +10,13 @@ import com.example.project.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Long.valueOf;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-
 
     // 댓글 작성
     @Transactional
@@ -36,7 +36,7 @@ public class CommentService {
         }
         if (optionalUserEntity.isEmpty()) {
             // 사용자를 찾을 수 없는 경우에 대한 명확한 예외 처리
-            throw new EntityNotFoundException("로그인 사용자를 찾을 수 없습니다. 세션이 만료되었거나 잘못된 사용자 이름일 수 있습니다.");
+            throw new EntityNotFoundException("로그인 사용자를 찾을 수 없습니다.");
         }
 
         BoardEntity boardEntity = optionalBoardEntity.get();
@@ -44,8 +44,6 @@ public class CommentService {
         CommentEntity commentEntity = CommentEntity.toSaveEntity(commentDTO, boardEntity, userEntity);
         return commentRepository.save(commentEntity).getId();
     }
-
-
 
     @Transactional
     // 댓글 출력
@@ -60,5 +58,31 @@ public class CommentService {
             commentDTOList.add(CommentDTO.toCommentDTO(commentEntity, boardId));
         }
         return commentDTOList;
+    }
+
+    // 댓글 수정
+// Service
+    @Transactional
+    public Long update(Long commentId, CommentDTO commentDTO) {
+        BoardEntity boardEntity = boardRepository.findById(commentDTO.getBoardId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
+        UserEntity userEntity = userRepository.findByUserName(commentDTO.getCommentWriter())
+                .orElseThrow(() -> new EntityNotFoundException("로그인 사용자를 찾을 수 없습니다."));
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("수정할 댓글이 존재하지 않습니다."));
+
+        commentEntity.update(commentDTO, boardEntity, userEntity);
+
+        return commentRepository.save(commentEntity).getId();
+    }
+
+    @Transactional
+    public CommentDTO findCommentById(Long commentId) {
+        // 댓글 ID를 사용하여 댓글 엔티티를 조회합니다.
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+
+        // 댓글 엔티티를 DTO로 변환합니다.
+        return CommentDTO.toCommentDTO(commentEntity, commentEntity.getBoardEntity().getId());
     }
 }

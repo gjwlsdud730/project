@@ -1,12 +1,10 @@
 package com.example.project.board.entity;
 
 import com.example.project.board.dto.CommentDTO;
-import com.example.project.user.dto.UserDTO;
 import com.example.project.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.catalina.User;
 
 @Entity
 @Getter
@@ -18,7 +16,7 @@ public class CommentEntity extends BaseEntity{
     private Long id;
 
     @Column
-    private String commentContents;
+    private String commentContent;
 
     // Board:Comment = 1:N
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,9 +30,16 @@ public class CommentEntity extends BaseEntity{
     public static CommentEntity toSaveEntity(CommentDTO commentDTO, BoardEntity boardEntity, UserEntity userEntity) {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setUserEntity(userEntity);
-        commentEntity.setCommentContents(commentDTO.getCommentContents());
+        commentEntity.setCommentContent(commentDTO.getCommentContent());
         commentEntity.setBoardEntity(boardEntity);
 
         return commentEntity;
+    }
+
+    // 업데이트
+    public void update(CommentDTO commentDTO, BoardEntity boardEntity, UserEntity userEntity) {
+        this.setBoardEntity(boardEntity);
+        this.setUserEntity(userEntity);
+        this.setCommentContent(commentDTO.getCommentContent());
     }
 }

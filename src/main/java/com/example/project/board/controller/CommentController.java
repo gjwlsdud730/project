@@ -2,9 +2,12 @@ package com.example.project.board.controller;
 
 import com.example.project.board.dto.CommentDTO;
 import com.example.project.board.service.CommentService;
+import com.example.project.user.entity.UserEntity;
+import com.example.project.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,15 +17,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/comment")
+@Slf4j
 public class CommentController {
     private final CommentService commentService;
+    private final UserRepository userRepository;
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@ModelAttribute CommentDTO commentDTO, Model model) {
+    public ResponseEntity<?> save(@ModelAttribute CommentDTO commentDTO) {
         try {
             Long saveResult = commentService.save(commentDTO);
             List<CommentDTO> commentDTOList = commentService.findAll(commentDTO.getBoardId());
@@ -33,4 +39,23 @@ public class CommentController {
             return new ResponseEntity<>("댓글 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-}
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateComment(@ModelAttribute CommentDTO commentDTO) {
+        try {
+            // 댓글을 업데이트합니다.
+            Long updatedCommentId = commentService.update(commentDTO.getId(), commentDTO);
+
+            // 업데이트된 댓글을 조회합니다.
+            CommentDTO updatedCommentDTO = commentService.findCommentById(updatedCommentId);
+
+            return new ResponseEntity<>(updatedCommentDTO, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+}//        } catch (Exception e) {
+//            return new ResponseEntity<>("댓글 수정 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
